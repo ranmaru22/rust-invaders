@@ -32,10 +32,7 @@ fn setup(mut commands: Commands, mut windows: ResMut<Windows>) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
     commands.spawn_bundle(UiCameraBundle::default());
 
-    // DEBUG: Put the window on the right so it doesn't overlap the editor
     let window = windows.get_primary_mut().unwrap();
-    window.set_position(IVec2::new(1800, 50));
-    // END DEBUG
 
     commands.insert_resource(Materials {
         player: Color::rgb(0.8, 0.0, 0.0),

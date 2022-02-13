@@ -1,0 +1,6 @@
+* Rust Invaders
+This is a small game for learning Bevy, mostly following [[https://github.com/jeremychone-channel][Jeremy Chone]]'s [[https://www.youtube.com/watch?v=Yb3vInxzKGE][Bevy
+Tutorial]] but updated to Bevy 0.6 and adding some additional stuff.
+
+Feel free to poke around if you're trying to learn Bevy yourself. It's an
+awesome engine.

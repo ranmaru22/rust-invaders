@@ -102,12 +102,16 @@ fn spawn_player(
 
 fn player_movement(
     keyboard_input: Res<Input<KeyCode>>,
+    window: ResMut<WinSize>,
     mut query: Query<(&Speed, &mut Transform), With<Player>>,
 ) {
     if let Ok((speed, mut transform)) = query.get_single_mut() {
-        let dir = if keyboard_input.pressed(KeyCode::A) {
+        let cur_x = transform.translation.x;
+        let max_x = window.w / 2.0 - 10.0;
+
+        let dir = if keyboard_input.pressed(KeyCode::A) && cur_x > -max_x {
             -1.0
-        } else if keyboard_input.pressed(KeyCode::S) {
+        } else if keyboard_input.pressed(KeyCode::S) && cur_x < max_x {
             1.0
         } else {
             0.0

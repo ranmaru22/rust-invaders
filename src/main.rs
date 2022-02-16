@@ -35,7 +35,7 @@ fn setup(mut commands: Commands, mut windows: ResMut<Windows>) {
     let window = windows.get_primary_mut().unwrap();
 
     commands.insert_resource(Materials {
-        player: Color::rgb(0.8, 0.0, 0.0),
+        player: Color::rgb(0.24, 0.4, 0.8),
         bullet: Color::rgb(0.6, 0.6, 0.96),
         e_bullet: Color::rgb(0.8, 0.4, 0.64),
         enemy: Color::rgb(0.8, 0.2, 0.26),

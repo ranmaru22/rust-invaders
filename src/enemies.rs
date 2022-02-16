@@ -7,7 +7,7 @@ use rand::{thread_rng, Rng};
 use std::f32::consts::PI;
 
 const MAX_ENEMIES: u32 = 3;
-const FORMATION_SIZE: u32 = 3;
+const FORMATION_SIZE: u32 = 2;
 
 pub struct EnemyPlugin;
 

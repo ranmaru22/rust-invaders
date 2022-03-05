@@ -17,6 +17,7 @@ struct Materials {
     bullet: Color,
     e_bullet: Color,
     enemy: Color,
+    bonus: Color,
 }
 
 // -- Components --
@@ -39,6 +40,7 @@ fn setup(mut commands: Commands, mut windows: ResMut<Windows>) {
         bullet: Color::rgb(0.6, 0.6, 0.96),
         e_bullet: Color::rgb(0.8, 0.4, 0.64),
         enemy: Color::rgb(0.8, 0.2, 0.26),
+        bonus: Color::rgb(0.9, 0.8, 0.4),
     });
 
     commands.insert_resource(WinSize {

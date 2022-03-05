@@ -4,6 +4,7 @@ use crate::{
 };
 
 use bevy::{core::FixedTimestep, prelude::*, sprite::collide_aabb::collide};
+use rand::{thread_rng, Rng};
 use std::collections::HashSet;
 
 pub struct PlayerPlugin;
@@ -16,6 +17,7 @@ impl Plugin for PlayerPlugin {
             .add_system(player_fire)
             .add_system(bullet_movement)
             .add_system(bullet_hit)
+            .add_system(bonus_drop)
             .add_system_set(
                 SystemSet::new()
                     .with_run_criteria(FixedTimestep::step(1.0))
@@ -31,6 +33,8 @@ pub struct Player;
 pub struct PlayerReadyFire(bool);
 #[derive(Component)]
 pub struct Bullet;
+#[derive(Component)]
+pub struct Bonus;
 
 // -- Resources --
 pub struct PlayerState {
@@ -173,12 +177,27 @@ fn bullet_movement(
     }
 }
 
+fn bonus_drop(
+    mut commands: Commands,
+    win_size: Res<WinSize>,
+    mut query: Query<(Entity, &Speed, &mut Transform), With<Bonus>>,
+) {
+    for (entity, speed, mut transform) in query.iter_mut() {
+        transform.translation.y -= speed.0 * TIME_STEP;
+
+        if transform.translation.y > win_size.h {
+            commands.entity(entity).despawn();
+        }
+    }
+}
+
 fn bullet_hit(
     mut commands: Commands,
     bullet_query: Query<(Entity, &Transform, &Sprite), With<Bullet>>,
     enemy_query: Query<(Entity, &Transform, &Sprite), With<Enemy>>,
     mut score: ResMut<HighScore>,
     mut active_enemies: ResMut<ActiveEnemies>,
+    materials: Res<Materials>,
 ) {
     let mut kills: HashSet<Entity> = HashSet::new();
 
@@ -186,6 +205,7 @@ fn bullet_hit(
         for (enemy, enemy_tf, enemy_sprite) in enemy_query.iter() {
             let bullet_scale = bullet_tf.scale.abs().truncate();
             let enemy_scale = enemy_tf.scale.abs().truncate();
+            let mut rng = thread_rng();
 
             if let Some(_collision) = collide(
                 bullet_tf.translation,
@@ -195,13 +215,34 @@ fn bullet_hit(
             ) {
                 if kills.get(&enemy).is_none() {
                     // Despawn colliding sprites
-                    commands.entity(enemy).despawn();
                     commands.entity(bullet).despawn();
+                    commands.entity(enemy).despawn();
 
                     score.0 += 100;
                     active_enemies.0 -= 1;
 
                     kills.insert(enemy);
+
+                    // Drop bonus
+                    if rng.gen_bool(0.2) {
+                        commands
+                            .spawn_bundle(SpriteBundle {
+                                sprite: Sprite {
+                                    custom_size: Some(Vec2::new(8.0, 8.0)),
+                                    color: materials.bonus,
+                                    ..Default::default()
+                                },
+
+                                transform: Transform {
+                                    translation: Vec3::new(enemy_tf.translation.x, enemy_tf.translation.y, 0.0),
+                                    ..Default::default()
+                                },
+
+                                ..Default::default()
+                            })
+                            .insert(Bonus)
+                            .insert(Speed(100.0));
+                    }
                 }
             };
         }
